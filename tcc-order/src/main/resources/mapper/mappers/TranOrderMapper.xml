@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuandai.architecture.repository.TranOrderRepository">
+    <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.TranOrder">
+        <result column="trans_id" property="transId" jdbcType="BIGINT"/>
+        <result column="state" property="state" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" javaType="java.sql.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <update id="createIfNotExistsTable">
+        CREATE TABLE IF NOT EXISTS t_tran_order (
+         trans_id BIGINT AUTO_INCREMENT,
+         state INT,
+         create_time TIMESTAMP,
+		 PRIMARY KEY (trans_id));
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE t_tran_order;
+    </update>
+    
+    <update id="dropTable">
+        DROP TABLE IF EXISTS t_tran_order;
+    </update>
+    
+    
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="transId">
+        INSERT INTO t_tran_order (
+         trans_id, state, create_time
+        )
+        VALUES (
+        #{transId,jdbcType=VARCHAR},
+        #{state,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+    <update id="updateState" >
+        UPDATE t_tran_order
+        SET state=#{state,jdbcType=INTEGER}
+        WHERE trans_id = #{transId,jdbcType=BIGINT}
+    </update>
+    
+    <delete id="delete">
+        DELETE FROM t_tran_order
+        WHERE trans_id = #{transId,jdbcType=BIGINT}
+    </delete>
+    
+    <select id="getByTranId" resultMap="baseResultMap">
+        SELECT   trans_id, state, create_time
+        FROM t_tran_order WHERE trans_id = #{transId,jdbcType=VARCHAR}
+    </select>
+    
+</mapper>

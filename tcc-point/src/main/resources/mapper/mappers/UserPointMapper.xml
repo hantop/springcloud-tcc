@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuandai.architecture.repository.UserPointRepository">
+    <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.UserPoint">
+        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="point" property="point" jdbcType="INTEGER"/>
+        <result column="create_time" property="createTime" javaType="java.sql.Date" jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <update id="createIfNotExistsTable">
+        CREATE TABLE IF NOT EXISTS t_user_point (
+         id INT AUTO_INCREMENT, 
+         name VARCHAR(1024),
+         point INT,
+         create_time TIMESTAMP,
+		 PRIMARY KEY (id));
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE t_user_point;
+    </update>
+    
+    <update id="dropTable">
+        DROP TABLE IF EXISTS t_user_point;
+    </update>
+    
+    
+    <insert id="confirmPoint">
+        INSERT INTO t_user_point (
+          id, name, point, create_time
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{point,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_user_point (
+          id, name, point, create_time
+        )
+        VALUES (
+        #{id,jdbcType=INTEGER},
+        #{name,jdbcType=VARCHAR},
+        #{point,jdbcType=INTEGER},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+    <delete id="delete">
+        DELETE FROM t_user_point WHERE id = #{id,jdbcType=INTEGER}
+    </delete>
+    
+    <select id="getById" resultMap="baseResultMap">
+        SELECT  id, name, point, create_time 
+        FROM t_user_point WHERE id = #{id,jdbcType=INTEGER}
+    </select>
+    
+</mapper>

@@ -1,0 +1,12 @@
+{"properties": [
+  {
+    "name": "tcc.check.thresholds",
+    "type": "java.lang.String",
+    "description": "A description for 'tcc.check.thresholds'"
+  },
+  {
+    "name": "tcc.cc.thresholds",
+    "type": "java.lang.String",
+    "description": "A description for 'tcc.cc.thresholds'"
+  }
+]}

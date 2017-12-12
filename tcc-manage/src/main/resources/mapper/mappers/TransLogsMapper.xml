@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuandai.architecture.repository.TransLogsRepository">
+    <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.TransLogs">
+        <result column="id" property="id" jdbcType="BIGINT"/>
+        <result column="trans_id" property="transId" jdbcType="BIGINT"/>
+        <result column="trans_state" property="transState" jdbcType="INTEGER"/>
+        <result column="trans_url" property="transUrl" jdbcType="VARCHAR"/>
+        <result column="log" property="log" jdbcType="VARCHAR"/>
+        <result column="create_time" property="createTime"  jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <update id="createIfNotExistsTable">
+        CREATE TABLE IF NOT EXISTS t_trans_logs (
+         id BIGINT AUTO_INCREMENT, 
+         trans_id BIGINT, 
+         trans_state INT, 
+         trans_url VARCHAR(1024),
+         log VARCHAR(1024),
+         create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+		 PRIMARY KEY (id))
+		 ENGINE=InnoDB  DEFAULT CHARSET=utf8;;
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE t_trans_logs;
+    </update>
+    
+    <update id="dropTable">
+        DROP TABLE IF EXISTS t_trans_logs;
+    </update>
+    
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO t_trans_logs (
+          trans_id, trans_state, trans_url, log, create_time
+        )
+        VALUES (
+        #{transId,jdbcType=INTEGER},
+        #{transState,jdbcType=INTEGER},
+        #{transUrl,jdbcType=VARCHAR},
+        #{log,jdbcType=VARCHAR},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+    
+    <delete id="deleteByTransId">
+        DELETE FROM t_trans_logs WHERE trans_id = #{transId,jdbcType=INTEGER}
+    </delete>
+    
+    <select id="getByTransId" resultMap="baseResultMap">
+        SELECT
+        id, trans_id, trans_state, trans_url, log, create_time
+        FROM
+        t_trans_logs 
+        WHERE trans_id = #{transId,jdbcType=INTEGER}
+        ORDER BY create_time
+        LIMIT 1000
+    </select>
+</mapper>
