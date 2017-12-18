@@ -13,9 +13,6 @@ public enum BZStatusCode {
     // 40xxx 客户端不合法的请求
     INVALID_MODEL_FIELDS(40001, "字段校验非法"),
 
-    // 40xxx 客户端不合法的请求
-    INVALID_SERVICE_NAME(40002, "服务校验非法"),
-
     /**
      * 参数类型非法，常见于SpringMVC中String无法找到对应的enum而抛出的异常
      */
@@ -47,7 +44,7 @@ public enum BZStatusCode {
     /**
      * 用于处理未知的服务端错误
      */
-    SERVER_UNKNOWN_ERROR(50001, "异常,请稍后再试"),
+    SERVER_UNKNOWN_ERROR(50001, "服务端异常, 请稍后再试"),
 
     /**
      * 用于远程调用时的系统出错

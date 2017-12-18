@@ -27,56 +27,76 @@ public class AccountService {
 
 	@Transactional(rollbackFor = Exception.class)
 	public void transTry(String name, Integer transId) {
-		Integer account = 3;
-		UserAccountTry userAccountTry = new UserAccountTry();
-		userAccountTry.setId(transId);
-		userAccountTry.setAccount(account);
-		userAccountTry.setName(name);
-		userAccountTry.setCreateTime(new Date());
+		try {
+			Integer account = 1;
+			UserAccountTry userAccountTry = new UserAccountTry();
+			userAccountTry.setId(transId);
+			userAccountTry.setAccount(account);
+			userAccountTry.setName(name);
+			userAccountTry.setCreateTime(new Date());
 
-		userAccountTryRepository.insert(userAccountTry);
-		UserAccount userAccount = new UserAccount();
-		userAccount.setName(name);
-		userAccount.setAccount(account);
+			userAccountTryRepository.insert(userAccountTry);
+			UserAccount userAccount = new UserAccount();
+			userAccount.setName(name);
+			userAccount.setAccount(account);
 
-		int ir = userAccountRepository.tryAccount(userAccount);
-		if (0 == ir) {
-			logger.error("try account error: {}",userAccount.getId());
+			int ir = userAccountRepository.tryAccount(userAccount);
+			if (0 == ir) {
+				logger.error("try account error: {}", transId);
+				throw new ServiceException();
+			}
+
+			logger.error("try account : {}", transId);
+		} catch (Exception ex) {
+			logger.error("try account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
 		}
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void transCancel(Integer transId) {
-		UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
-		// 幂等
-		if (null == userAccountTry) {
-			return;
-		}
-		UserAccount userAccount = new UserAccount();
-		userAccount.setName(userAccountTry.getName());
-		userAccount.setAccount(userAccountTry.getAccount());
+		try {
+			UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
+			// 幂等
+			if (null == userAccountTry) {
+				return;
+			}
+			UserAccount userAccount = new UserAccount();
+			userAccount.setName(userAccountTry.getName());
+			userAccount.setAccount(userAccountTry.getAccount());
 
-		if (1 != userAccountRepository.cancelAccount(userAccount)) {
-			logger.error("cancel account error: {}",transId);
-			throw new ServiceException();
-		}
+			if (1 != userAccountRepository.cancelAccount(userAccount)) {
+				logger.error("cancel userAccountRepository error: {}", transId);
+				throw new ServiceException();
+			}
 
-		if (1 != userAccountTryRepository.delete(transId)) {
-			logger.error("delete account error: {}",transId);
+			if (1 != userAccountTryRepository.delete(transId)) {
+				logger.error("cancel userAccountTryRepository error: {}", transId);
+				throw new ServiceException();
+			}
+			logger.error("cancel account : {}", transId);
+		} catch (Exception ex) {
+			logger.error("cancel account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
 		}
 	}
 
 	@Transactional(rollbackFor = Exception.class)
 	public void transConfirm(Integer transId) {
-		UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
-		// 幂等
-		if (null == userAccountTry) {
-			return;
-		}
+		try {
+			UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
+			// 幂等
+			if (null == userAccountTry) {
+				return;
+			}
 
-		if (1 != userAccountTryRepository.delete(transId)) {
+			if (1 != userAccountTryRepository.delete(transId)) {
+				logger.error("confirm account error: {}", transId);
+				throw new ServiceException();
+			}
+			logger.error("confirm account : {}", transId);
+		} catch (Exception ex) {
+			logger.error("confirm account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
 		}
 	}

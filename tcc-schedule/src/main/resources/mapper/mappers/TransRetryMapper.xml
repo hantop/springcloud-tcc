@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.tuandai.architecture.repository.TransRetryRepository">
+    <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.Trans">
+        <result column="trans_id" property="transId" jdbcType="BIGINT"/>
+        <result column="service_name" property="serviceName" jdbcType="VARCHAR"/>
+        <result column="check_url" property="checkUrl" jdbcType="VARCHAR"/>
+        <result column="trans_state" property="transState" jdbcType="INTEGER"/>
+        <result column="check_times" property="checkTimes" jdbcType="INTEGER"/>
+        <result column="check_time" property="checkTime"   jdbcType="TIMESTAMP"/>
+        <result column="check_threshold" property="checkThreshold" jdbcType="INTEGER"/>
+        <result column="cc_times" property="ccTimes" jdbcType="INTEGER"/>
+        <result column="cc_time" property="ccTime" javaType="java.sql.Date" jdbcType="TIMESTAMP"/>
+        <result column="cc_threshold" property="ccThreshold" jdbcType="INTEGER"/>
+        <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP"/>
+        <result column="create_time" property="createTime"  jdbcType="TIMESTAMP"/>
+    </resultMap>
+
+    <update id="createIfNotExistsTable">
+        CREATE TABLE IF NOT EXISTS t_trans_retry (
+         trans_id BIGINT AUTO_INCREMENT, 
+         service_name VARCHAR(50),
+         check_url VARCHAR(1024),
+         trans_state INT,
+         check_times INT,
+         check_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+         check_threshold INT,
+         cc_times INT,
+         cc_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP  ,
+         cc_threshold INT,
+         update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+         create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
+		 PRIMARY KEY (trans_id))
+		 ENGINE=InnoDB  DEFAULT CHARSET=utf8;
+    </update>
+
+    <update id="truncateTable">
+        TRUNCATE TABLE t_trans_retry;
+    </update>
+    
+    <update id="dropTable">
+        DROP TABLE IF EXISTS t_trans_retry;
+    </update>
+        
+    <insert id="insert">
+        INSERT INTO t_trans_retry (
+          trans_id,service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        )
+        VALUES (
+        #{transId,jdbcType=BIGINT},
+        #{serviceName,jdbcType=VARCHAR},
+        #{checkUrl,jdbcType=VARCHAR},
+        #{transState,jdbcType=INTEGER},
+        #{checkTimes,jdbcType=INTEGER},
+        #{checkTime,jdbcType=TIMESTAMP},
+        #{checkThreshold,jdbcType=INTEGER},
+        #{ccTimes,jdbcType=INTEGER},
+        #{ccTime,jdbcType=TIMESTAMP},
+        #{ccThreshold,jdbcType=INTEGER},
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{createTime,jdbcType=TIMESTAMP}
+        )
+    </insert>
+        
+    <update id="update" >
+        UPDATE t_trans_retry
+        SET check_url=#{checkUrl,jdbcType=VARCHAR}, 
+            trans_state=#{transState,jdbcType=INTEGER},
+            check_times=#{checkTimes,jdbcType=INTEGER},
+            check_time=#{checkTime,jdbcType=TIMESTAMP},
+            check_threshold=#{checkThreshold,jdbcType=INTEGER},
+            cc_times=#{ccTimes,jdbcType=INTEGER},
+            cc_time=#{ccTime,jdbcType=TIMESTAMP},
+            cc_threshold=#{ccThreshold,jdbcType=INTEGER},
+            update_time=#{updateTime,jdbcType=TIMESTAMP}
+        WHERE trans_id = #{transId,jdbcType=BIGINT}
+    </update>
+    
+    <delete id="delete">
+        DELETE FROM t_trans_retry WHERE trans_id = #{transId,jdbcType=BIGINT}
+    </delete>
+    
+    <delete id="deleteBatch" parameterType="java.util.List">
+        DELETE FROM t_trans_retry
+        WHERE
+        trans_id in
+        <foreach collection="list" open="(" close=")" separator=" , " item="transId">
+            #{transId}
+        </foreach>
+    </delete>
+    
+    
+    <select id="getByTransId" resultMap="baseResultMap">
+        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        FROM t_trans_retry WHERE trans_id = #{transId,jdbcType=BIGINT}
+    </select>
+    
+    
+    <select id="getScheduleCCTrans" resultMap="baseResultMap">
+        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        FROM t_trans_retry 
+        WHERE trans_state = #{transState,jdbcType=BIGINT}
+        AND  cc_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
+        AND  cc_threshold  &gt; 0
+        LIMIT 1000
+    </select>
+    
+    
+    <select id="getScheduleCheckTrans" resultMap="baseResultMap">
+        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        FROM t_trans_retry 
+        WHERE trans_state = #{transState,jdbcType=BIGINT}
+        AND  check_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
+        AND  check_threshold  &gt; 0
+        LIMIT 1000
+    </select>
+    
+</mapper>

@@ -19,6 +19,7 @@
 		<module>tcc-point</module>
 		<module>tcc-order</module>
 		<module>tcc-manage</module>
+		<module>tcc-schedule</module>
 		<module>tcc-manage-hlt</module>
 	</modules>
 

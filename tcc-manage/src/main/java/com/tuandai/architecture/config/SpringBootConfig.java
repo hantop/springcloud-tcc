@@ -6,23 +6,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import com.netflix.config.ConfigurationManager;
-import com.tuandai.architecture.componet.TccJobs;
-import com.tuandai.architecture.componet.ToInstancesIPUrl;
 
 @Component
 public class SpringBootConfig {
 	private static final Logger logger = LoggerFactory.getLogger(SpringBootConfig.class);
-
-	@Value("${tcc.manage.isHLT:false}")
-	Boolean isHLT;
-
-	
-	@Value("${tcc.file.log:true}")
-	Boolean tccFileLog;
 	
 	@Value("${spring.application.name}")
 	String serviceName;
-
+	
 	@Value("${tcc.check.thresholds}")
 	String tccCheckThresholds;
 
@@ -32,7 +23,7 @@ public class SpringBootConfig {
 	@Value("${timeoutTransactionPatchTransCmd:3000}")
 	int timeoutTransactionPatchTransCmd;
 
-	@Value("${sizeTransactionPatchTransPool:100}")
+	@Value("${sizeTransactionPatchTransPool:200}")
 	int sizeTransactionPatchTransPool;
 
 	@Value("${timeoutTransactionCCTransCmd:3000}")
@@ -40,12 +31,14 @@ public class SpringBootConfig {
 
 	@Value("${sizeTransactionCCTransPool:200}")
 	int sizeTransactionCCTransPool;
-	
-	public Boolean isFileLog(){
-		return tccFileLog;
-	}
-	
 
+	@Value("${timeoutRestTryTransCmd:5000}")
+	int timeoutRestTryTransCmd;
+
+	@Value("${sizeRestTryTransPool:500}")
+	int sizeRestTryTransPool;
+	
+	
 	public String getTccCheckThresholds() {
 		return tccCheckThresholds;
 	}
@@ -53,24 +46,12 @@ public class SpringBootConfig {
 	public String getTccCCThresholds() {
 		return tccCCThresholds;
 	}
-
-	public void initailConfig() {
-		logger.debug("========= isHLT =========: {}",this.isHLT);
-		logger.debug("========= tccCheckThresholds =========: {}",this.tccCheckThresholds);
-		logger.debug("========= tccCCThresholds =========: {}",this.tccCCThresholds);
-		logger.debug("========= TccJobs.CC_MINUTE =========: {}",TccJobs.CC_MINUTE);
-		logger.debug("========= TccJobs.CHECK_MINUTE =========: {}",TccJobs.CHECK_MINUTE);
-		
-		//HTL 开关
-		ToInstancesIPUrl.isHLT = this.isHLT;
-				
-	}
-
+	
 	// 断路器配置
 	public void initalNetflixConfig() {
 		// fallback make default to 200
 		ConfigurationManager.getConfigInstance()
-				.setProperty("hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests", 200);
+				.setProperty("hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests", 500);
 
 		logger.debug("========= timeoutTransactionPatchTransCmd =========: {}",
 				timeoutTransactionPatchTransCmd);
@@ -96,7 +77,20 @@ public class SpringBootConfig {
 		ConfigurationManager.getConfigInstance().setProperty(
 				"hystrix.threadpool.TransactionCCTransPool.coreSize",
 				sizeTransactionCCTransPool);
+
 		
+
+		logger.debug("========= timeoutRestTryTransCmd =========: {}",
+				timeoutRestTryTransCmd);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.command.RestTryTransCmd.execution.isolation.thread.timeoutInMilliseconds",
+				timeoutRestTryTransCmd);
+
+		logger.debug("========= sizeRestTryTransPool =========: {}",
+				sizeRestTryTransPool);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.threadpool.RestTryTransPool.coreSize",
+				sizeRestTryTransPool);
 		
 	}
 }

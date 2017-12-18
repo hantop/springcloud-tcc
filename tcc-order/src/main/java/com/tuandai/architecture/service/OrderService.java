@@ -21,23 +21,28 @@ public class OrderService {
 		try {
 			PatchTransModel patchTransModel = new PatchTransModel();
 			patchTransModel.setTransId(String.valueOf(tranOrder.getTransId()));
-			patchTransModel.setTransUrl("tcc-account/tcc/account");
+			patchTransModel.setTransUrl("tcc-account/account");
 			patchTransModel.setTransUrlParam("{'name':'Lily'}");
 			String request = tccTransBaseService.tryTrans(patchTransModel);
+
+			logger.info("===========transTryAccount  request============== {}", request);
 
 			// 降级
 			if (null == request) {
 				tccTransBaseService.cancelTrans(tranOrder);
 				return null;
 			}
+
+			// TODO 返回结果业务处理
+			if (request.contains("account")) {
+				return request;
+			}
+			return null;
 		} catch (Exception ex) {
-			logger.error("transTryAccount: ", ex.getMessage());
+			logger.error("transId:{} , transTryAccount: {}", tranOrder.getTransId(), ex.toString());
 			tccTransBaseService.cancelTrans(tranOrder);
 			return null;
 		}
-
-		// TODO 返回结果业务处理
-		return "";
 	}
 
 	// 添加积分；
@@ -45,23 +50,25 @@ public class OrderService {
 		try {
 			PatchTransModel patchTransModel = new PatchTransModel();
 			patchTransModel.setTransId(String.valueOf(tranOrder.getTransId()));
-			patchTransModel.setTransUrl("tcc-point/tcc/point");
+			patchTransModel.setTransUrl("tcc-point/point");
 			patchTransModel.setTransUrlParam("{'name':'Lily'}");
 			String request = tccTransBaseService.tryTrans(patchTransModel);
 
+			logger.info("===========transTryPoint  request============== {}", request);
 			// 降级
 			if (null == request) {
 				tccTransBaseService.cancelTrans(tranOrder);
 				return null;
 			}
+			if (request.contains("point")) {
+				return request;
+			}
+			return null;
 		} catch (Exception ex) {
-			logger.error("transTryPoint: ", ex.getMessage());
+			logger.error("transId:{} , transTryPoint: {}", tranOrder.getTransId(), ex.toString());
 			tccTransBaseService.cancelTrans(tranOrder);
 			return null;
 		}
-
-		// TODO 返回结果业务处理
-		return "";
 	}
 
 }

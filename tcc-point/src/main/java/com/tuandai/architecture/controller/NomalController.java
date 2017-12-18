@@ -29,30 +29,33 @@ public class NomalController {
 
 	@ApiOperation(value = "预添加积分", notes = "预添加积分")
 	@ApiImplicitParam(name = "body", value = "事务信息", paramType = "body", required = true, dataType = "TryPointModel")
-	@RequestMapping(value = "/tcc/point", method = RequestMethod.POST)
+	@RequestMapping(value = "/point/try", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccTry(@Valid @RequestBody TryPointModel body) {
 
-		logger.debug("body: {}", body.toString());
+		logger.error("tccTry b: {}", body.toString());
 		String name = body.getName();
 		Integer transId = body.getTransId();
 
 		pointService.transTry(name, transId);
+		
+		logger.error("tccTry e: {}", transId);
 
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		return new ResponseEntity<Result<String>>(new Result<String>("point try: " + transId), HttpStatus.OK);
 	}
 	
 
 
 	@ApiOperation(value = "撤销添加积分", notes = "撤销添加积分")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/point", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/point/cancel", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccCancel(@Valid @RequestBody String transId) {
 
-		logger.debug("body: {}", transId);
+		logger.error("tccCancel b: {}", transId);
 
 		pointService.transCancel(Integer.valueOf(transId));
 
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		logger.error("tccCancel e: {}", transId);
+		return new ResponseEntity<Result<String>>(new Result<String>("point cancel: " + transId), HttpStatus.OK);
 	}
 
 	
@@ -60,14 +63,15 @@ public class NomalController {
 
 	@ApiOperation(value = "确认事务", notes = "确认事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/point", method = RequestMethod.PUT)
+	@RequestMapping(value = "/point/confirm", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccConfirm(@Valid @RequestBody String transId) {
 
-		logger.debug("body: {}", transId);
+		logger.error("tccConfirm b: {}", transId);
 
 		pointService.transConfirm(Integer.valueOf(transId));
 
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		logger.error("tccConfirm e: {}", transId);
+		return new ResponseEntity<Result<String>>(new Result<String>("point confirm: " + transId), HttpStatus.OK);
 	}
 
 }

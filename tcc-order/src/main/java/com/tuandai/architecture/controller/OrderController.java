@@ -50,6 +50,7 @@ public class OrderController {
 		if (null == result) {
 			return new ResponseEntity<Result<String>>(new Result<String>("积分处理异常，已回滚"), HttpStatus.OK);
 		}
+
 		// 确认事务
 		tccTransBaseService.confirmTrans(to);
 
@@ -69,5 +70,6 @@ public class OrderController {
 		
 		return new ResponseEntity<String>(String.valueOf(to.getState()), HttpStatus.OK);
 	}
+
 
 }

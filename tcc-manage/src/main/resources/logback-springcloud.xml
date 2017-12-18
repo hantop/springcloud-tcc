@@ -30,21 +30,18 @@
 
 	<!-- 测试环境 -->
 	<springProfile name="test">
-		<appender name="PROD_FILE"
-			class="ch.qos.logback.core.rolling.RollingFileAppender">
-			<file>${PRO_FILE_PATH}</file>
-			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-				<fileNamePattern>${PRO_FILE_PATH}/running.%d{yyyy-MM-dd}.log
-				</fileNamePattern>
-				<MaxHistory>100</MaxHistory>
-			</rollingPolicy>
-			<layout class="ch.qos.logback.classic.PatternLayout">
+		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+			<encoder>
 				<pattern>${PATTERN}</pattern>
-			</layout>
+			</encoder>
 		</appender>
 
+		<logger name="com.tuandai.architecture" level="debug" />
+		<logger name="org.springframework.web.client" level="debug" />
+
+
 		<root level="info">
-			<appender-ref ref="PROD_FILE" />
+			<appender-ref ref="CONSOLE" />
 		</root>
 	</springProfile>
 

@@ -9,19 +9,16 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.tuandai.architecture.componet.ToInstancesIPUrl;
 import com.tuandai.architecture.constant.BZStatusCode;
 import com.tuandai.architecture.exception.ServiceException;
 import com.tuandai.architecture.model.PatchTransModel;
 import com.tuandai.architecture.model.PostTransModel;
-import com.tuandai.architecture.model.TransDetail;
 import com.tuandai.architecture.service.TccService;
 import com.tuandai.architecture.util.Result;
 
@@ -35,10 +32,7 @@ public class TccController {
 
 	@Autowired
 	TccService tccService;
-	
-	 @Autowired
-	 ToInstancesIPUrl toInstancesIPUrl;
-	 
+		 
 
 	@ApiOperation(value = "CREATE", notes = "创建事务")
 	@ApiImplicitParam(name = "body", value = "基础信息", paramType = "body", required = true, dataType = "PostTransModel")
@@ -64,17 +58,11 @@ public class TccController {
 	@ApiOperation(value = "TRY", notes = "预处理")
 	@ApiImplicitParam(name = "body", value = "事务信息", paramType = "body", required = true, dataType = "PatchTransModel")
 	@HystrixCommand(commandKey = "TransactionPatchTransCmd", fallbackMethod = "tccTryFallback", threadPoolKey = "TransactionPatchTransPool")
-	@RequestMapping(value = "/tcc", method = RequestMethod.POST)
+	@RequestMapping(value = "/try", method = RequestMethod.POST)
 	public ResponseEntity<Object> tccTry(@Valid @RequestBody PatchTransModel body) {
 
 		logger.debug("body: {}", body.toString());
 		
-        if(null == toInstancesIPUrl.getIPUrl(body.getTransUrl()))
-        {
-        	logger.error("invalid serviceName  transId {} , transUrl  {}", body.getTransId(), body.getTransUrl());
-			throw new ServiceException(BZStatusCode.INVALID_SERVICE_NAME); 
-        }
-
 		String transId = body.getTransId();
 		String transUrl = body.getTransUrl();
 		String transUrlParam = body.getTransUrlParam();
@@ -92,7 +80,7 @@ public class TccController {
 	@ApiOperation(value = "CONFIRM", notes = "确认事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "body", required = true, dataType = "String")
 	@HystrixCommand(commandKey = "TransactionCCTransCmd", fallbackMethod = "tccConfirmFallback", threadPoolKey = "TransactionCCTransPool")
-	@RequestMapping(value = "/tcc", method = RequestMethod.PUT)
+	@RequestMapping(value = "/confirm", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccConfirm(@Valid @RequestBody String transId) {
 
 		logger.debug("transId: {}", transId);
@@ -115,7 +103,7 @@ public class TccController {
 	@ApiOperation(value = "CANCEL", notes = "取消事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "body", required = true, dataType = "String")
 	@HystrixCommand(commandKey = "TransactionCCTransCmd", fallbackMethod = "tccCancelFallback", threadPoolKey = "TransactionCCTransPool")
-	@RequestMapping(value = "/tcc", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/cancel", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccCancel(@Valid @RequestBody String transId) {
 
 		logger.debug("transId: {}", transId);
@@ -134,34 +122,9 @@ public class TccController {
 		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
 	}
 	
-
-
-	@ApiOperation(value = "INFO", notes = "获取事务详情")
-	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "path", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/get/{transId}", method = RequestMethod.POST)
-	public ResponseEntity<Result<TransDetail>> tccGet(@PathVariable  String transId) {
-
-		logger.debug("transId: {}", transId);
-		if (null == transId || transId.isEmpty() || !Pattern.matches("[0-9]+$", transId) || transId.length() > 23) {
-			logger.error("invalid  parameter, transId: {}", transId);
-			throw new ServiceException(BZStatusCode.INVALID_MODEL_FIELDS);
-		}
-		
-		TransDetail td = new TransDetail();
-
-		td.setTrans(tccService.getTrans(Long.valueOf(transId)));
-		td.setUrls(tccService.getTransUrl(Long.valueOf(transId)));
-		td.setLogs(tccService.getTransLog(Long.valueOf(transId)));
-
-		return new ResponseEntity<Result<TransDetail>>(new Result<TransDetail>(td), HttpStatus.OK);
-	}
-	
-
-
-
 	@ApiOperation(value = "FORCE CANCEL", notes = "强制取消事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "body", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/cancel", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/tcc/cancel", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccForceCancel(@Valid @RequestBody String transId) {
 
 		logger.debug("transId: {}", transId);

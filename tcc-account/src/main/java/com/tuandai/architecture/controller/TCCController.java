@@ -29,32 +29,32 @@ public class TCCController {
 
 	@ApiOperation(value = "冻结资金", notes = "冻结资金")
 	@ApiImplicitParam(name = "body", value = "事务信息", paramType = "body", required = true, dataType = "TryAccountModel")
-	@RequestMapping(value = "/tcc/account", method = RequestMethod.POST)
+	@RequestMapping(value = "/account/try", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccTry(@Valid @RequestBody TryAccountModel body) {
 
-		logger.debug("tccTry b: {}", body.toString());
+		logger.error("tccTry b: {}", body.toString());
 		String name = body.getName();
 		Integer transId = body.getTransId();
 
 		accountService.transTry(name, transId);
 
-		logger.debug("tccTry e: {}", body.toString());
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		logger.error("tccTry e: {}", transId);
+		return new ResponseEntity<Result<String>>(new Result<String>("account try: " + transId), HttpStatus.OK);
 	}
 	
 
 
 	@ApiOperation(value = "解冻资金", notes = "解冻资金")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/account", method = RequestMethod.DELETE)
+	@RequestMapping(value = "/account/cancel", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccCancel(@Valid @RequestBody String transId) {
 
-		logger.debug("tccCancel b: {}", transId);
+		logger.error("tccCancel b: {}", transId);
 
 		accountService.transCancel(Integer.valueOf(transId));
 
-		logger.debug("tccCancel e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		logger.error("tccCancel e: {}", transId);
+		return new ResponseEntity<Result<String>>(new Result<String>("account cancel: " + transId), HttpStatus.OK);
 	}
 
 	
@@ -62,15 +62,15 @@ public class TCCController {
 
 	@ApiOperation(value = "确认事务", notes = "确认事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
-	@RequestMapping(value = "/tcc/account", method = RequestMethod.PUT)
+	@RequestMapping(value = "/account/confirm", method = RequestMethod.POST)
 	public ResponseEntity<Result<String>> tccConfirm(@Valid @RequestBody String transId) {
 
-		logger.debug("tccConfirm b: {}", transId);
+		logger.error("tccConfirm b: {}", transId);
 
 		accountService.transConfirm(Integer.valueOf(transId));
 
-		logger.debug("tccConfirm e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
+		logger.error("tccConfirm e: {}", transId);
+		return new ResponseEntity<Result<String>>(new Result<String>("account confirm: " + transId), HttpStatus.OK);
 	}
 
 }

@@ -6,11 +6,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 import com.alibaba.fastjson.JSONObject;
+import com.google.common.collect.ImmutableList;
 import com.tuandai.architecture.constant.TransState;
-import com.tuandai.architecture.controller.client.TccClient;
+import com.tuandai.architecture.controller.client.TccClientRest;
 import com.tuandai.architecture.domain.TranOrder;
 import com.tuandai.architecture.model.PatchTransModel;
 import com.tuandai.architecture.model.PostTransModel;
@@ -23,27 +26,39 @@ public class TccTransBaseService {
 	@Autowired
 	private TranOrderRepository tranOrderRepository;
 
+//	@Autowired
+//	TccClient tccClient;
+	
 	@Autowired
-	TccClient tccClient;
+	TccClientRest tccClient;
 
 	@Value("${spring.application.name}")
 	String serviceName;
 
+	static final String urlTccCreate ="http://tcc-manage/create";
+	static final String urlTry ="http://tcc-manage/try";
+	static final String urlConfirm ="http://tcc-manage/confirm";
+	static final String urlCancel ="http://tcc-manage/cancel";
+
+	static HttpHeaders header = new HttpHeaders();
+
+	static {
+		header.setAccept(ImmutableList.of(MediaType.APPLICATION_JSON_UTF8));
+		header.setContentType(MediaType.APPLICATION_JSON_UTF8);
+	}
 	
 	// 新建事务
 	public TranOrder createTrans() {
+		String transId = null;
 		PostTransModel postTransModel = new PostTransModel();
 		postTransModel.setServiceName(this.serviceName);
-		String request = tccClient.create(postTransModel);
-		JSONObject joRequest = JSONObject.parseObject(request);
-		String transId = joRequest.getString("data");
-		
+		JSONObject joRequest = JSONObject.parseObject(tccClient.create(postTransModel));
+		transId = joRequest.getString("data");
+				
 		if(null == transId || Long.valueOf(transId) < 1){
 			return null;
 		}
 		
-		
-
 		logger.info("[create] > transId:{}",transId);
 
 		// 持久化事务状态
@@ -67,6 +82,7 @@ public class TccTransBaseService {
 		tranOrder.setState(TransState.CANCEL.code());
 		tranOrderRepository.updateState(tranOrder);
 		tccClient.cancelTrans(String.valueOf(tranOrder.getTransId()));
+
 	}
 	
 	// 提交事务

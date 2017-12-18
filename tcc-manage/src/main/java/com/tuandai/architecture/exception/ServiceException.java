@@ -13,10 +13,6 @@ public class ServiceException extends RuntimeException {
 
 	public ServiceException() {
 	}
-	
-	public ServiceException(String message) {
-		this.setMessage(message);
-	}
 
 	public ServiceException(int code,String message) {
 		this.setCode(code);
