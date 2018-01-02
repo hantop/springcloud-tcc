@@ -137,8 +137,9 @@ public class TccServiceImpl implements TccService {
 
 	}
 
-	private void RestCC(int state, List<TransUrls> transUrlList) {
+	private Boolean RestCC(int state, List<TransUrls> transUrlList) {
 
+		
 		final CountDownLatch latch = new CountDownLatch(transUrlList.size());
 		for (TransUrls tu : transUrlList) {
 			executorCCServicePool.execute(() -> {
@@ -149,10 +150,13 @@ public class TccServiceImpl implements TccService {
 
 		try {
 			// 此处必须用超时机制，不可直接： x.await();
-			latch.await(3, TimeUnit.SECONDS);
+			latch.await(1, TimeUnit.SECONDS);
 		} catch (InterruptedException e) {
 			logger.error("=================countDownLatch exception============={}", e.getMessage());
+			return false;
 		}
+
+		return true;
 	}
 
 	private void CCRestTask(TransUrls tu, int state) {
@@ -170,6 +174,7 @@ public class TccServiceImpl implements TccService {
 			} else {
 				tu.setCode(HttpStatus.FAILED_DEPENDENCY.value());
 			}
+
 		} catch (Exception e) {
 			logger.error("[Exception] ccTrans  transId: {} , TransUrl: {}, Exception: {}", tu.getTransId(),
 					tu.getTransUrl(), e.getMessage());
@@ -209,19 +214,15 @@ public class TccServiceImpl implements TccService {
 	}
 
 	@Override
-	public void confrimTrans(Long transId) {
-
-		Trans trans = transRepository.getByTransId(transId);
-		if (null == trans) {
-			return;
-		}
+	public void confirmTrans(Long transId) {
 
 		// 获取列表，执行确认操作
-		List<TransUrls> transUrlList = transUrlsRepository.getByTransId(trans.getTransId());
-
+		List<TransUrls> transUrlList = transUrlsRepository.getByTransId(transId);
+		
 		// 远程调用
 		RestCC(TransState.CONFIRM.code(), transUrlList);
 
+		
 		// 结果检查
 		String logstr = "";
 		Date dt = new Date();
@@ -229,35 +230,43 @@ public class TccServiceImpl implements TccService {
 			if (HttpStatus.OK.value() == tu.getCode()) {
 				continue;
 			}
-			// 提交失败
-			logstr = "confirm ::: confirm = toRetry!";
-			transLogsService.writeLog(dt, logstr, trans.getTransId(), trans.getTransState(), tu.getTransUrl());
-
 			// 数据迁移
 			ccToRetry(transId, TransState.CONFIRM.code());
+
+			// 提交失败
+			logstr = "confirm ::: confirm = toRetry!";
+			transLogsService.writeLog(dt, logstr, transId, TransState.CONFIRM.code(), tu.getTransUrl());
+
 			return;
 		}
 
 		// 提交成功
 		logstr = "confirm ::: confirm = success!";
-		transLogsService.writeLog(new Date(), logstr, trans.getTransId(), trans.getTransState(), "over");
+		transLogsService.writeLog(new Date(), logstr, transId, TransState.CONFIRM.code(), "over");
 
 		// 清除已完成事务信息
 		ccOver(transId);
 	}
 
 	@Override
-	public void cancelMark(Long transId) {
-		Trans trans = transRepository.getByTransId(transId);
-		if (null == trans) {
-			return;
-		}
-
-		String logstr = "cancel ::: cancel = toRetry!";
-		transLogsService.writeLog(new Date(), logstr, trans.getTransId(), trans.getTransState(), "");
+	public void confirmMark(Long transId) {
 
 		// 数据迁移
+		ccToRetry(transId, TransState.CONFIRM.code());
+		
+		String logstr = "confirm ::: confirm = toRetry!";
+		transLogsService.writeLog(new Date(), logstr, transId, TransState.CONFIRM.code(), "");
+
+	}
+
+	@Override
+	public void cancelMark(Long transId) {
+		// 数据迁移
 		ccToRetry(transId, TransState.CANCEL.code());
+		
+		String logstr = "cancel ::: cancel = toRetry!";
+		transLogsService.writeLog(new Date(), logstr, transId, TransState.CANCEL.code(), "");
+
 	}
 
 	@Override

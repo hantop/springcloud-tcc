@@ -25,11 +25,11 @@ public class RunTimeExceptionHandler {
         return new ResponseEntity<Result<String>>(new Result<String>(e.getCode(),e.getMessage(),null), HttpStatus.BAD_REQUEST);
     }
     
-    @ExceptionHandler(value = NullPointerException.class)
+    @ExceptionHandler(value = Exception.class)
     @ResponseBody
-    public ResponseEntity<Result<String>> NullPointerExceptionHandler(HttpServletRequest req, NullPointerException e) throws Exception {
-        logger.error("NullPointerException：{}",e);
-        return new ResponseEntity<Result<String>>(new Result<String>(HttpStatus.NOT_FOUND.value(),e.getMessage(),null), HttpStatus.NOT_FOUND);
+    public ResponseEntity<Result<String>> ExceptionHandler(HttpServletRequest req, Exception e) throws Exception {
+        logger.error("Exception：{}",e);
+        return new ResponseEntity<Result<String>>(new Result<String>(HttpStatus.METHOD_NOT_ALLOWED.value(),e.getMessage(),null), HttpStatus.METHOD_NOT_ALLOWED);
     }
     
 }

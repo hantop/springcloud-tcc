@@ -25,7 +25,9 @@ public interface TransRetryRepository {
 
     Trans getByTransId(Long id);
 	
-	List<Trans> getScheduleCCTrans(Trans trans);
+	List<Trans> getScheduleCancelTrans(Trans trans);
+	
+	List<Trans> getScheduleConfirmTrans(Trans trans);
 	
 	List<Trans> getScheduleCheckTrans(Trans trans);
 

@@ -88,14 +88,16 @@ public class TccController {
 			logger.error("invalid  parameter, transId: {}", transId);
 			throw new ServiceException(BZStatusCode.INVALID_MODEL_FIELDS);
 		}
-
-		tccService.confrimTrans(Long.valueOf(transId));
+		// 后续优化，通过缓存方案，标记状态，异步调度 
+		tccService.confirmMark(Long.valueOf(transId));
 
 		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
 	}
 	
 	public ResponseEntity<Result<String>> tccConfirmFallback(@Valid @RequestBody String transId) {
+
 		logger.error("[fallback] tccConfirm controller, transId: {}", transId);
+		
 		return new ResponseEntity<Result<String>>(new Result<String>(""), HttpStatus.OK);
 	}
 	
@@ -111,6 +113,8 @@ public class TccController {
 			logger.error("invalid  parameter, transId: {}", transId);
 			throw new ServiceException(BZStatusCode.INVALID_MODEL_FIELDS);
 		}
+
+		// 后续优化，通过缓存方案，标记状态，异步调度 
 		//【注： 主动标记 取消事务， 切记不可主动直接取消事务，CANCEL操作必须在Try之后执行,防止因为熔断降级，导致CC在前，Try在后；】！
 		tccService.cancelMark(Long.valueOf(transId));
 

@@ -1,0 +1,2 @@
+DROP SCHEMA IF EXISTS tcc_trans;
+CREATE SCHEMA IF NOT EXISTS tcc_trans;

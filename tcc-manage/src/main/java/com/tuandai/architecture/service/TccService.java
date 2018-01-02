@@ -18,7 +18,9 @@ public interface TccService {
 	
 	Boolean ccOverList(List<Long> transId);
 	
-	void confrimTrans(Long transId);
+	void confirmTrans(Long transId);
+	
+	void confirmMark(Long transId);
 	
 	void cancelMark(Long transId);
 	

@@ -20,23 +20,41 @@ public class SpringBootConfig {
 	@Value("${tcc.cc.thresholds}")
 	String tccCCThresholds;
 
-	@Value("${timeoutTransactionPatchTransCmd:3000}")
+	
+	@Value("${timeoutTransactionPatchTransCmd:600}")
 	int timeoutTransactionPatchTransCmd;
 
-	@Value("${sizeTransactionPatchTransPool:200}")
+	@Value("${sizeTransactionPatchTransPool:100}")
 	int sizeTransactionPatchTransPool;
 
-	@Value("${timeoutTransactionCCTransCmd:3000}")
-	int timeoutTransactionCCTransCmd;
 
-	@Value("${sizeTransactionCCTransPool:200}")
-	int sizeTransactionCCTransPool;
-
-	@Value("${timeoutRestTryTransCmd:5000}")
+	@Value("${timeoutRestTryTransCmd:600}")
 	int timeoutRestTryTransCmd;
 
-	@Value("${sizeRestTryTransPool:500}")
+	@Value("${sizeRestTryTransPool:100}")
 	int sizeRestTryTransPool;
+	
+
+	@Value("${timeoutTransactionCCTransCmd:200}")
+	int timeoutTransactionCCTransCmd;
+
+	@Value("${sizeTransactionCCTransPool:50}")
+	int sizeTransactionCCTransPool;
+	
+	
+
+	@Value("${timeoutRestConfirmTransCmd:500}")
+	int timeoutRestConfirmTransCmd;
+
+	@Value("${sizeRestConfirmTransPool:10}")
+	int sizeRestConfirmTransPool;
+
+	@Value("${timeoutRestCancelTransCmd:500}")
+	int timeoutRestCancelTransCmd;
+
+	@Value("${sizeRestCancelTransPool:10}")
+	int sizeRestCancelTransPool;
+	
 	
 	
 	public String getTccCheckThresholds() {
@@ -49,9 +67,18 @@ public class SpringBootConfig {
 	
 	// 断路器配置
 	public void initalNetflixConfig() {
-		// fallback make default to 200
+		// fallback make default to 1000
 		ConfigurationManager.getConfigInstance()
-				.setProperty("hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests", 500);
+		.setProperty("hystrix.command.default.fallback.isolation.semaphore.maxConcurrentRequests", 1000);
+
+		ConfigurationManager.getConfigInstance()
+				.setProperty("hystrix.command.default.circuitBreaker.enabled", true);
+		
+		ConfigurationManager.getConfigInstance()
+		.setProperty("hystrix.command.default.circuitBreaker.requestVolumeThreshold", 50);
+		
+		ConfigurationManager.getConfigInstance()
+		.setProperty("hystrix.command.default.circuitBreaker.sleepWindowInMilliseconds", 5000);
 
 		logger.debug("========= timeoutTransactionPatchTransCmd =========: {}",
 				timeoutTransactionPatchTransCmd);
@@ -91,6 +118,32 @@ public class SpringBootConfig {
 		ConfigurationManager.getConfigInstance().setProperty(
 				"hystrix.threadpool.RestTryTransPool.coreSize",
 				sizeRestTryTransPool);
+		
+
+		logger.debug("========= timeoutRestConfirmTransCmd =========: {}",
+				timeoutRestConfirmTransCmd);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.command.RestConfirmTransCmd.execution.isolation.thread.timeoutInMilliseconds",
+				timeoutRestConfirmTransCmd);
+
+		logger.debug("========= sizeRestConfirmTransPool =========: {}",
+				sizeRestConfirmTransPool);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.threadpool.RestConfirmTransPool.coreSize",
+				sizeRestConfirmTransPool);
+		
+
+		logger.debug("========= timeoutRestCancelTransCmd =========: {}",
+				timeoutRestCancelTransCmd);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.command.RestCancelTransCmd.execution.isolation.thread.timeoutInMilliseconds",
+				timeoutRestCancelTransCmd);
+
+		logger.debug("========= sizeRestCancelTransPool =========: {}",
+				sizeRestCancelTransPool);
+		ConfigurationManager.getConfigInstance().setProperty(
+				"hystrix.threadpool.RestCancelTransPool.coreSize",
+				sizeRestCancelTransPool);
 		
 	}
 }

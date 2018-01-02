@@ -56,7 +56,12 @@ public class TccTaskServiceImpl implements TccTaskService {
 		trans.setTransState(state);
 		trans.setCcTime(new Date());
 
-		return transRetryRepository.getScheduleCCTrans(trans);
+		if (TransState.CONFIRM.code() == state) {
+			return transRetryRepository.getScheduleConfirmTrans(trans);
+		}else{
+			return transRetryRepository.getScheduleCancelTrans(trans);
+		}
+		
 	}
 
 	@Override

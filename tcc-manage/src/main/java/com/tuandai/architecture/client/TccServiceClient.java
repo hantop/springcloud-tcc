@@ -41,6 +41,7 @@ public class TccServiceClient {
 		return null;
 	}
 
+	@HystrixCommand(commandKey = "RestConfirmTransCmd", fallbackMethod = "confirmTransFallback", threadPoolKey = "RestConfirmTransPool")
 	public String confirmTrans(String transUrl,String transId) {
 		HttpHeaders header = new HttpHeaders();
 		ResponseEntity<String> response = restTemplate.exchange("http://" + transUrl + "/confirm", HttpMethod.POST,
@@ -50,7 +51,13 @@ public class TccServiceClient {
 		}
 		return null;
 	}
+	
+	public String confirmTransFallback(String transUrl,String transId) {
+		logger.error("[fallback] confirmTrans Fallback  url: {} , transId: {}", transUrl, transId );
+		return null;
+	}
 
+	@HystrixCommand(commandKey = "RestCancelTransCmd", fallbackMethod = "cancelTransFallback", threadPoolKey = "RestCancelTransPool")
 	public String cancelTrans(String transUrl,String transId) {
 		HttpHeaders header = new HttpHeaders();
 		ResponseEntity<String> response = restTemplate.exchange("http://" + transUrl + "/cancel", HttpMethod.POST,
@@ -58,6 +65,11 @@ public class TccServiceClient {
 		if (HttpStatus.OK.equals(response.getStatusCode())) {
 			return response.getBody();
 		}
+		return null;
+	}
+	
+	public String cancelTransFallback(String transUrl,String transId) {
+		logger.error("[fallback] cancelTrans Fallback  url: {} , transId: {}", transUrl, transId );
 		return null;
 	}
 

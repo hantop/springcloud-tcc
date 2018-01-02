@@ -96,13 +96,22 @@
     </select>
     
     
-    <select id="getScheduleCCTrans" resultMap="baseResultMap">
+    
+    <select id="getScheduleCancelTrans" resultMap="baseResultMap">
         SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
         FROM t_trans_retry 
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  cc_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
         AND  cc_threshold  &gt; 0
-        LIMIT 1000
+        LIMIT 2000
+    </select>
+    
+    <select id="getScheduleConfirmTrans" resultMap="baseResultMap">
+        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        FROM t_trans_retry 
+        WHERE trans_state = #{transState,jdbcType=BIGINT}
+        AND  cc_threshold  &gt; 0
+        LIMIT 2000
     </select>
     
     
@@ -112,7 +121,7 @@
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  check_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
         AND  check_threshold  &gt; 0
-        LIMIT 1000
+        LIMIT 2000
     </select>
     
 </mapper>

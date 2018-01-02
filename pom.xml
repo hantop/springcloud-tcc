@@ -21,6 +21,7 @@
 		<module>tcc-manage</module>
 		<module>tcc-schedule</module>
 		<module>tcc-manage-hlt</module>
+		<module>tcc-dashboard</module>
 	</modules>
 
 	<parent>

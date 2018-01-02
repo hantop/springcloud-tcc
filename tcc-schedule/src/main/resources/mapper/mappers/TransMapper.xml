@@ -101,7 +101,7 @@
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  cc_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
         AND  cc_threshold  &gt; 0
-        LIMIT 1000
+        LIMIT 2000
     </select>
     
     
@@ -111,7 +111,7 @@
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  check_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
         AND  check_threshold  &gt; 0
-        LIMIT 1000
+        LIMIT 2000
     </select>
     
 </mapper>

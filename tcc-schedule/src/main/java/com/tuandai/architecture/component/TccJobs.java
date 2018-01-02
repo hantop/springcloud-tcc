@@ -31,7 +31,7 @@ public class TccJobs {
 
 	public final static long CC_MINUTE = 1000;
 
-	public final static long CHECK_MINUTE = 10000;
+	public final static long CHECK_MINUTE = 5000;
 
 	private static Boolean SCHEDULE_CHECK_OPEN = true;
 
