@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public final class Trans {
-	private Long transId;
+	private String transId;
 	
 	private String serviceName;
 
@@ -34,11 +34,22 @@ public final class Trans {
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
-	public Long getTransId() {
+	
+	private String resUrls;
+
+	public String getResUrls() {
+		return resUrls;
+	}
+
+	public void setResUrls(String resUrls) {
+		this.resUrls = resUrls;
+	}
+	
+	public String getTransId() {
 		return transId;
 	}
 
-	public void setTransId(Long transId) {
+	public void setTransId(String transId) {
 		this.transId = transId;
 	}
 

@@ -34,16 +34,18 @@ public class NomalController {
 
 		logger.error("tccTry b: {}", body.toString());
 		String name = body.getName();
-		Integer transId = body.getTransId();
+		String transId = body.getTransId();
 
-		pointService.transTry(name, transId);
-		
+		int row = pointService.transTry(name, transId);
+
 		logger.error("tccTry e: {}", transId);
-
-		return new ResponseEntity<Result<String>>(new Result<String>("point try: " + transId), HttpStatus.OK);
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (0 == row) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		} 
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
+		
 	}
-	
-
 
 	@ApiOperation(value = "撤销添加积分", notes = "撤销添加积分")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
@@ -52,14 +54,17 @@ public class NomalController {
 
 		logger.error("tccCancel b: {}", transId);
 
-		pointService.transCancel(Integer.valueOf(transId));
+		Boolean rs = pointService.transCancel(transId);
 
 		logger.error("tccCancel e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>("point cancel: " + transId), HttpStatus.OK);
+
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (!rs) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		} 
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
+		
 	}
-
-	
-
 
 	@ApiOperation(value = "确认事务", notes = "确认事务")
 	@ApiImplicitParam(name = "transId", value = "事务ID", paramType = "transId", required = true, dataType = "String")
@@ -68,10 +73,16 @@ public class NomalController {
 
 		logger.error("tccConfirm b: {}", transId);
 
-		pointService.transConfirm(Integer.valueOf(transId));
+		Boolean rs = pointService.transConfirm(transId);
 
 		logger.error("tccConfirm e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>("point confirm: " + transId), HttpStatus.OK);
+
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (!rs) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		} 
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
+		
 	}
 
 }

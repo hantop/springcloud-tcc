@@ -1,33 +1,19 @@
 package com.tuandai.architecture.service;
 
-import java.util.List;
-
-import org.springframework.http.ResponseEntity;
-
 import com.tuandai.architecture.domain.Trans;
-import com.tuandai.architecture.domain.TransUrls;
 
 public interface TccService {
-	Long createTrans(String serviceName);
-	
-	ResponseEntity<Object> patchTrans(Long transId,String transUrl,String transUrlParam);
-	
-	Boolean ccToRetry(Long transId,int state);
-	
-	Boolean ccOver(Long transId);
-	
-	Boolean ccOverList(List<Long> transId);
-	
-	void confirmTrans(Long transId);
-	
-	void confirmMark(Long transId);
-	
-	void cancelMark(Long transId);
-	
-	void forceCancelTrans(Long transId);
-	
-	Trans getTrans(Long transId);
-	
-	List<TransUrls> getTransUrl(Long transId);
-	
+
+	public Boolean insertTrans(Trans trans);
+
+	public boolean insertTransRetry(Trans trans);
+
+	public boolean updateTrans(Trans trans);
+
+	public boolean updateTransRetry(Trans trans);
+
+	public void forceCancelTrans(String transId);
+
+	public Trans getTrans(String transId);
+
 }

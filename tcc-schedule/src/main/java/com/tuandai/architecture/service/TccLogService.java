@@ -4,6 +4,6 @@ import java.util.Date;
 
 public interface TccLogService {
 	
-	void writeLog(Date createTime, String logstr, Long transId, Integer transState, String transUrl);
+	void writeLog(Date createTime, String logstr, String transId, Integer transState, String transUrl);
 	
 }

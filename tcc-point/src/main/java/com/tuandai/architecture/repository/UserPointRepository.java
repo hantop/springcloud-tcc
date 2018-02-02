@@ -11,9 +11,9 @@ public interface UserPointRepository {
 
 	void truncateTable();
 
-	int delete(Integer id);
+	int delete(String uid);
 
-	UserPoint getById(Integer id);
+	UserPoint getById(String uid);
 
 	void dropTable();
 

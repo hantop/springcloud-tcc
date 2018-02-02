@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>com.tuandai.architecture</groupId>
-			<artifactId>tcc-clent</artifactId>
+			<artifactId>tcc-common</artifactId>
 		</dependency>
 		<!-- httpclient -->
 		<dependency>
@@ -69,6 +69,12 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
+		</dependency>
+
+		<!--mongodb -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-data-mongodb</artifactId>
 		</dependency>
 	</dependencies>
 

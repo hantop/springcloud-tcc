@@ -13,11 +13,11 @@ public interface TransUrlsRepository {
 
 	void truncateTable();
 
-	int deleteByTransId(Long transId);
+	int deleteByTransId(String transId);
 	
-    void deleteBatchByTransId(List<Long> transIds);
+    void deleteBatchByTransId(List<String> transIds);
 
-	List<TransUrls> getByTransId(Long transId);
+	List<TransUrls> getByTransId(String transId);
 
 	void dropTable();
 

@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import com.alibaba.fastjson.JSONObject;
 import com.tuandai.architecture.domain.Trans;
 
 /**
@@ -31,22 +30,13 @@ public class TccServiceClient {
 		return null;
 	}
 
-	public String tryTrans(String transUrl,JSONObject jsonBody) {
-		HttpHeaders header = new HttpHeaders();
-		ResponseEntity<String> response = restTemplate.exchange("http://" + transUrl + "/try", HttpMethod.POST,
-				new HttpEntity<JSONObject>(jsonBody, header), String.class);
-		if (HttpStatus.OK.equals(response.getStatusCode())) {
-			return response.getBody();
-		}
-		return null;
-	}
 
 	public String confirmTrans(String transUrl,String transId) {
 		HttpHeaders header = new HttpHeaders();
 		ResponseEntity<String> response = restTemplate.exchange("http://" + transUrl + "/confirm", HttpMethod.POST,
 				new HttpEntity<String>(transId, header), String.class);
 		if (HttpStatus.OK.equals(response.getStatusCode())) {
-			return response.getBody();
+			return response.getStatusCode().toString();
 		}
 		return null;
 	}
@@ -56,7 +46,7 @@ public class TccServiceClient {
 		ResponseEntity<String> response = restTemplate.exchange("http://" + transUrl + "/cancel", HttpMethod.POST,
 				new HttpEntity<String>(transId, header), String.class);
 		if (HttpStatus.OK.equals(response.getStatusCode())) {
-			return response.getBody();
+			return response.getStatusCode().toString();
 		}
 		return null;
 	}

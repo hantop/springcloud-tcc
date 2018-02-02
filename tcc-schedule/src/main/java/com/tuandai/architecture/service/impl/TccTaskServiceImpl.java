@@ -17,12 +17,12 @@ import com.tuandai.architecture.client.TccServiceClient;
 import com.tuandai.architecture.component.ThresholdsTimeManage;
 import com.tuandai.architecture.config.SpringBootConfig;
 import com.tuandai.architecture.constant.BZStatusCode;
-import com.tuandai.architecture.constant.TransState;
 import com.tuandai.architecture.domain.Trans;
 import com.tuandai.architecture.exception.ServiceException;
 import com.tuandai.architecture.repository.TransRepository;
 import com.tuandai.architecture.repository.TransRetryRepository;
 import com.tuandai.architecture.service.TccTaskService;
+import com.tuandai.transaction.constant.TCCState;
 
 @Service
 public class TccTaskServiceImpl implements TccTaskService {
@@ -49,14 +49,14 @@ public class TccTaskServiceImpl implements TccTaskService {
 
 	@Override
 	public List<Trans> getCCTrans(int state) {
-		if (TransState.CONFIRM.code() != state && TransState.CANCEL.code() != state) {
+		if (TCCState.COMMIT.value() != state && TCCState.CANCEL.value() != state) {
 			return null;
 		}
 		Trans trans = new Trans();
 		trans.setTransState(state);
 		trans.setCcTime(new Date());
 
-		if (TransState.CONFIRM.code() == state) {
+		if (TCCState.COMMIT.value() == state) {
 			return transRetryRepository.getScheduleConfirmTrans(trans);
 		}else{
 			return transRetryRepository.getScheduleCancelTrans(trans);
@@ -67,7 +67,7 @@ public class TccTaskServiceImpl implements TccTaskService {
 	@Override
 	public List<Trans> getCheckTrans() {
 		Trans trans = new Trans();
-		trans.setTransState(TransState.PENDING.code());
+		trans.setTransState(TCCState.UNKNOW.value());
 		trans.setCcTime(new Date());
 
 		return transRepository.getScheduleCheckTrans(trans);
@@ -78,7 +78,7 @@ public class TccTaskServiceImpl implements TccTaskService {
 		if (null == trans) {
 			throw new ServiceException(BZStatusCode.INVALID_MODEL_FIELDS);
 		}
-		if (TransState.PENDING.code() != trans.getTransState()) {
+		if (TCCState.UNKNOW.value() != trans.getTransState()) {
 			throw new ServiceException(BZStatusCode.INVALID_STATE_OPTION);
 		}
 
@@ -107,7 +107,7 @@ public class TccTaskServiceImpl implements TccTaskService {
 	@Override
 	public List<Trans> checkTrans(List<Trans> trans) {
 
-		final ConcurrentHashMap<Long, Integer> isCheckedMap = new ConcurrentHashMap<>();
+		final ConcurrentHashMap<String, Integer> isCheckedMap = new ConcurrentHashMap<>();
 		final CountDownLatch latch = new CountDownLatch(trans.size());
 		for (Trans tu : trans) {
 			executorCheckServicePool.execute(() -> {

@@ -4,19 +4,54 @@
 	<!-- 文件输出格式 -->
 	<property name="PATTERN" value="%-12(%d{yyyy-MM-dd HH:mm:ss.SSS}) |-%-5level [%thread] %c [%L] -| %msg%n" />
 	<!-- test文件路径 -->
-	<property name="TEST_FILE_PATH" value="/opt/tuandai/logs/tcc/order/running.log" />
+	<property name="TEST_FILE_PATH" value="/data/opt/logs/tcc/order/running.log" />
 	<!-- pro文件路径 -->
-	<property name="PRO_FILE_PATH" value="/opt/tuandai/logs/tcc/order/running.log" />
+	<property name="PRO_FILE_PATH" value="/data/opt/logs/tcc/order/running.log" />
+
+
+	<!-- 事务日志 -->
+	<appender name="TRACE_FILE"
+			  class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/data/opt/logs/tcc/order/trace.log</file> <!-- 自定义文件打印路径 -->
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<fileNamePattern>/data/opt/logs/tcc/order/trace/tcc-order.%d{yyyyMMddHHmm}.%i.log</fileNamePattern> <!-- 自定义文件打印路径 -->
+			<MaxHistory>3000</MaxHistory>
+
+			<timeBasedFileNamingAndTriggeringPolicy
+					class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+				<maxFileSize>10MB</maxFileSize>
+			</timeBasedFileNamingAndTriggeringPolicy>
+		</rollingPolicy>
+
+		<encoder>
+			<pattern>%msg%n</pattern>
+			<charset>UTF-8</charset>
+		</encoder>
+
+		<filter class="ch.qos.logback.classic.filter.LevelFilter">
+			<level>info</level>
+			<onMatch>ACCEPT</onMatch>
+			<onMismatch>DENY</onMismatch>
+		</filter>
+	</appender>
+
+
+
 
 	<!-- 开发环境 -->
 	<springProfile name="dev">
+        <!-- 日志方式接入 事务消息 ：  必须配置到： logback -->
+		<logger name="flume" level="info" >
+			<appender-ref ref="TRACE_FILE" />
+		</logger>
+		
 		<appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
 			<encoder>
 				<pattern>${PATTERN}</pattern>
 			</encoder>
 		</appender>
 		
-		<logger name="com.tuandai.architecture" level="debug"/>
+		<logger name="com.tuandai" level="debug"/>
 		<logger name="org.springframework.web.client" level="debug"/>
 
 		<root level="info">
@@ -42,8 +77,14 @@
 		</root>
 	</springProfile>
 
+
 	<!-- 生产环境 -->
 	<springProfile name="prd">
+        <!-- 日志方式接入 事务消息 ：  必须配置到： logback -->
+		<logger name="flume" level="info" >
+			<appender-ref ref="TRACE_FILE" />
+		</logger>
+		
 		<appender name="PROD_FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
 			<file>${PRO_FILE_PATH}</file>
 			<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">

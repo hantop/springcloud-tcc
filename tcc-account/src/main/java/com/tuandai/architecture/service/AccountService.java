@@ -26,11 +26,11 @@ public class AccountService {
 	private UserAccountTryRepository userAccountTryRepository;
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transTry(String name, Integer transId) {
+	public int transTry(String name, String transId) {
 		try {
 			Integer account = 1;
 			UserAccountTry userAccountTry = new UserAccountTry();
-			userAccountTry.setId(transId);
+			userAccountTry.setUid(transId);
 			userAccountTry.setAccount(account);
 			userAccountTry.setName(name);
 			userAccountTry.setCreateTime(new Date());
@@ -47,6 +47,7 @@ public class AccountService {
 			}
 
 			logger.error("try account : {}", transId);
+			return ir;
 		} catch (Exception ex) {
 			logger.error("try account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
@@ -54,12 +55,12 @@ public class AccountService {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transCancel(Integer transId) {
+	public Boolean transCancel(String transId) {
 		try {
 			UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
 			// 幂等
 			if (null == userAccountTry) {
-				return;
+				return true;
 			}
 			UserAccount userAccount = new UserAccount();
 			userAccount.setName(userAccountTry.getName());
@@ -75,6 +76,7 @@ public class AccountService {
 				throw new ServiceException();
 			}
 			logger.error("cancel account : {}", transId);
+			return true;
 		} catch (Exception ex) {
 			logger.error("cancel account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
@@ -82,12 +84,12 @@ public class AccountService {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transConfirm(Integer transId) {
+	public Boolean transConfirm(String transId) {
 		try {
 			UserAccountTry userAccountTry = userAccountTryRepository.getById(transId);
 			// 幂等
 			if (null == userAccountTry) {
-				return;
+				return true;
 			}
 
 			if (1 != userAccountTryRepository.delete(transId)) {
@@ -95,6 +97,7 @@ public class AccountService {
 				throw new ServiceException();
 			}
 			logger.error("confirm account : {}", transId);
+			return true;
 		} catch (Exception ex) {
 			logger.error("confirm account Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();

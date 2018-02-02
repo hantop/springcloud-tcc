@@ -22,14 +22,14 @@ public class RunTimeExceptionHandler {
     @ResponseBody
     public ResponseEntity<Result<String>> ServiceExceptionHandler(HttpServletRequest req, ServiceException e) throws Exception {
         logger.error("ServiceException：{}",e);
-        return new ResponseEntity<Result<String>>(new Result<String>(e.getCode(),e.getMessage(),null), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<Result<String>>(new Result<String>(e.getCode(),e.getMessage(),null), HttpStatus.EXPECTATION_FAILED);
     }
     
     @ExceptionHandler(value = Exception.class)
     @ResponseBody
     public ResponseEntity<Result<String>> ExceptionHandler(HttpServletRequest req, Exception e) throws Exception {
         logger.error("Exception：{}",e);
-        return new ResponseEntity<Result<String>>(new Result<String>(HttpStatus.NOT_FOUND.value(),e.getMessage(),null), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<Result<String>>(new Result<String>(HttpStatus.NOT_FOUND.value(),e.getMessage(),null), HttpStatus.EXPECTATION_FAILED);
     }
     
 }

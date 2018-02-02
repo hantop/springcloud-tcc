@@ -19,14 +19,13 @@ public interface TransRepository {
 
 	int update(Trans trans);
 
-	int delete(Long id);
+	int delete(String id);
 	
     void deleteBatch(List<Long> transIds);
 
-	Trans getByTransId(Long id);
+	Trans getByTransId(String id);
 	
 	List<Trans> getScheduleCCTrans(Trans trans);
 	
 	List<Trans> getScheduleCheckTrans(Trans trans);
-
 }

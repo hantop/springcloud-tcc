@@ -13,6 +13,6 @@
         <mapper resource="mapper/mappers/TransMapper.xml"/>
         <mapper resource="mapper/mappers/TransRetryMapper.xml"/>
         <mapper resource="mapper/mappers/TransLogsMapper.xml"/>
-        <mapper resource="mapper/mappers/TransUrlsMapper.xml"/>
+       <!--  <mapper resource="mapper/mappers/TransUrlsMapper.xml"/> -->
     </mappers>
 </configuration>

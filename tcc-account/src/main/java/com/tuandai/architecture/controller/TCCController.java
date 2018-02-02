@@ -34,12 +34,18 @@ public class TCCController {
 
 		logger.error("tccTry b: {}", body.toString());
 		String name = body.getName();
-		Integer transId = body.getTransId();
+		String transId = body.getTransId();
 
-		accountService.transTry(name, transId);
+		int row = accountService.transTry(name, transId);
 
 		logger.error("tccTry e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>("account try: " + transId), HttpStatus.OK);
+
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (0 == row) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		} 
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
+		
 	}
 	
 
@@ -51,10 +57,16 @@ public class TCCController {
 
 		logger.error("tccCancel b: {}", transId);
 
-		accountService.transCancel(Integer.valueOf(transId));
+		Boolean rs = accountService.transCancel(transId);
 
 		logger.error("tccCancel e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>("account cancel: " + transId), HttpStatus.OK);
+
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (!rs) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		}
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
+		
 	}
 
 	
@@ -67,10 +79,15 @@ public class TCCController {
 
 		logger.error("tccConfirm b: {}", transId);
 
-		accountService.transConfirm(Integer.valueOf(transId));
+		Boolean rs = accountService.transConfirm(transId);
 
 		logger.error("tccConfirm e: {}", transId);
-		return new ResponseEntity<Result<String>>(new Result<String>("account confirm: " + transId), HttpStatus.OK);
+
+		HttpStatus httpStatus = HttpStatus.OK;
+		if (!rs) {
+			httpStatus = HttpStatus.FAILED_DEPENDENCY;
+		}
+		return new ResponseEntity<Result<String>>(new Result<String>(transId), httpStatus);
 	}
 
 }

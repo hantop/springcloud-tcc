@@ -11,7 +11,7 @@ public final class TransLogs {
 	
 	private Long id;
 
-	private Long transId;
+	private String transId;
 
 	private Integer transState;
 
@@ -30,11 +30,11 @@ public final class TransLogs {
 		this.id = id;
 	}
 
-	public Long getTransId() {
+	public String getTransId() {
 		return transId;
 	}
 
-	public void setTransId(Long transId) {
+	public void setTransId(String transId) {
 		this.transId = transId;
 	}
 

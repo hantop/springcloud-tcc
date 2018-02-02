@@ -19,11 +19,11 @@ public interface TransRepository {
 
 	int update(Trans trans);
 
-	int delete(Long id);
+	int delete(String id);
 	
-    void deleteBatch(List<Long> transIds);
+    void deleteBatch(List<String> transIds);
 
-	Trans getByTransId(Long id);
+	Trans getByTransId(String id);
 	
 	List<Trans> getScheduleCCTrans(Trans trans);
 	

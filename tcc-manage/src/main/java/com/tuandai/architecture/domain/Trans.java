@@ -5,13 +5,13 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public final class Trans {
-	private Long transId;
+	private String transId;
 	
 	private String serviceName;
 
 	private String checkUrl;
 
-	// {[pending|cancel|confirm]}
+	// {[unknow|cancel|confirm]}
 	private Integer transState;
 
 	private Integer checkTimes;
@@ -27,6 +27,16 @@ public final class Trans {
 	private Date ccTime;
 
 	private Integer ccThreshold;
+	
+	private String resUrls;
+
+	public String getResUrls() {
+		return resUrls;
+	}
+
+	public void setResUrls(String resUrls) {
+		this.resUrls = resUrls;
+	}
 
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date updateTime;
@@ -34,11 +44,11 @@ public final class Trans {
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 
-	public Long getTransId() {
+	public String getTransId() {
 		return transId;
 	}
 
-	public void setTransId(Long transId) {
+	public void setTransId(String transId) {
 		this.transId = transId;
 	}
 

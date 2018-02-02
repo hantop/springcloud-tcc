@@ -2,9 +2,10 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tuandai.architecture.repository.TransRepository">
     <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.Trans">
-        <result column="trans_id" property="transId" jdbcType="BIGINT"/>
+        <result column="trans_id" property="transId" jdbcType="VARCHAR"/>
         <result column="service_name" property="serviceName" jdbcType="VARCHAR"/>
         <result column="check_url" property="checkUrl" jdbcType="VARCHAR"/>
+        <result column="res_urls" property="resUrls" jdbcType="VARCHAR"/>
         <result column="trans_state" property="transState" jdbcType="INTEGER"/>
         <result column="check_times" property="checkTimes" jdbcType="INTEGER"/>
         <result column="check_time" property="checkTime"   jdbcType="TIMESTAMP"/>
@@ -18,9 +19,10 @@
 
     <update id="createIfNotExistsTable">
         CREATE TABLE IF NOT EXISTS t_trans (
-         trans_id BIGINT AUTO_INCREMENT, 
+         trans_id VARCHAR(100), 
          service_name VARCHAR(50),
          check_url VARCHAR(1024),
+         res_urls VARCHAR(2048),
          trans_state INT,
          check_times INT,
          check_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ,
@@ -44,11 +46,13 @@
         
     <insert id="insert" useGeneratedKeys="true" keyProperty="transId">
         INSERT INTO t_trans (
-          service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+          trans_id, service_name, check_url, res_urls, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
         )
         VALUES (
+        #{transId,jdbcType=VARCHAR},
         #{serviceName,jdbcType=VARCHAR},
         #{checkUrl,jdbcType=VARCHAR},
+        #{resUrls,jdbcType=VARCHAR},
         #{transState,jdbcType=INTEGER},
         #{checkTimes,jdbcType=INTEGER},
         #{checkTime,jdbcType=TIMESTAMP},
@@ -64,6 +68,7 @@
     <update id="update" >
         UPDATE t_trans
         SET check_url=#{checkUrl,jdbcType=VARCHAR}, 
+            res_urls=#{resUrls,jdbcType=VARCHAR},
             trans_state=#{transState,jdbcType=INTEGER},
             check_times=#{checkTimes,jdbcType=INTEGER},
             check_time=#{checkTime,jdbcType=TIMESTAMP},
@@ -72,11 +77,11 @@
             cc_time=#{ccTime,jdbcType=TIMESTAMP},
             cc_threshold=#{ccThreshold,jdbcType=INTEGER},
             update_time=#{updateTime,jdbcType=TIMESTAMP}
-        WHERE trans_id = #{transId,jdbcType=BIGINT}
+        WHERE trans_id = #{transId,jdbcType=VARCHAR}
     </update>
     
     <delete id="delete">
-        DELETE FROM t_trans WHERE trans_id = #{transId,jdbcType=BIGINT}
+        DELETE FROM t_trans WHERE trans_id = #{transId,jdbcType=VARCHAR}
     </delete>
     
     <delete id="deleteBatch" parameterType="java.util.List">
@@ -90,13 +95,13 @@
     
     
     <select id="getByTransId" resultMap="baseResultMap">
-        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
-        FROM t_trans WHERE trans_id = #{transId,jdbcType=BIGINT}
+        SELECT  trans_id, service_name, check_url, res_urls, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        FROM t_trans WHERE trans_id = #{transId,jdbcType=VARCHAR}
     </select>
     
     
     <select id="getScheduleCCTrans" resultMap="baseResultMap">
-        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        SELECT  trans_id, service_name, check_url, res_urls, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
         FROM t_trans 
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  cc_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}
@@ -106,7 +111,7 @@
     
     
     <select id="getScheduleCheckTrans" resultMap="baseResultMap">
-        SELECT  trans_id, service_name, check_url, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
+        SELECT  trans_id, service_name, check_url, res_urls, trans_state, check_times,check_time,check_threshold,cc_times,cc_time,cc_threshold,update_time,create_time
         FROM t_trans 
         WHERE trans_state = #{transState,jdbcType=BIGINT}
         AND  check_time  &lt;= #{ccTime,jdbcType=TIMESTAMP}

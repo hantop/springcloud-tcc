@@ -11,9 +11,9 @@ public interface UserAccountTryRepository {
     
     void truncateTable();
         
-    int delete(Integer id);
+    int delete(String uid);
     
-    UserAccountTry getById(Integer id);
+    UserAccountTry getById(String uid);
     
     void dropTable();
     

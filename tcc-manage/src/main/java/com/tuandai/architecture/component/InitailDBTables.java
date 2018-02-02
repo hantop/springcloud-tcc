@@ -6,23 +6,21 @@ import org.springframework.stereotype.Component;
 
 import com.tuandai.architecture.repository.TransRepository;
 import com.tuandai.architecture.repository.TransRetryRepository;
-import com.tuandai.architecture.repository.TransUrlsRepository;
 
 @Component
 public class InitailDBTables {
 	@Resource
 	private TransRepository transRepository;
 
-	@Resource
-	private TransUrlsRepository transUrlsRepository;
-	
+	// @Resource
+	// private TransUrlsRepository transUrlsRepository;
+
 	@Resource
 	private TransRetryRepository transRetryRepository;
-	
 
 	public void createTables() {
 		transRepository.createIfNotExistsTable();
-		transUrlsRepository.createIfNotExistsTable();
+		// transUrlsRepository.createIfNotExistsTable();
 		transRetryRepository.createIfNotExistsTable();
 	}
 }

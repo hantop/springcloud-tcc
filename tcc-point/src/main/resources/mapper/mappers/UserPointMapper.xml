@@ -2,7 +2,7 @@
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.tuandai.architecture.repository.UserPointRepository">
     <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.UserPoint">
-        <result column="id" property="id" jdbcType="INTEGER"/>
+        <result column="uid" property="uid" jdbcType="VARCHAR"/>
         <result column="name" property="name" jdbcType="VARCHAR"/>
         <result column="point" property="point" jdbcType="INTEGER"/>
         <result column="create_time" property="createTime" javaType="java.sql.Date" jdbcType="TIMESTAMP"/>
@@ -10,11 +10,11 @@
 
     <update id="createIfNotExistsTable">
         CREATE TABLE IF NOT EXISTS t_user_point (
-         id INT AUTO_INCREMENT, 
+         uid VARCHAR(100), 
          name VARCHAR(1024),
          point INT,
          create_time TIMESTAMP,
-		 PRIMARY KEY (id));
+		 PRIMARY KEY (uid));
     </update>
 
     <update id="truncateTable">
@@ -28,22 +28,22 @@
     
     <insert id="confirmPoint">
         INSERT INTO t_user_point (
-          id, name, point, create_time
+          uid, name, point, create_time
         )
         VALUES (
-        #{id,jdbcType=INTEGER},
+        #{uid,jdbcType=VARCHAR},
         #{name,jdbcType=VARCHAR},
         #{point,jdbcType=INTEGER},
         #{createTime,jdbcType=TIMESTAMP}
         )
     </insert>
     
-    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+    <insert id="insert" useGeneratedKeys="true" keyProperty="uid">
         INSERT INTO t_user_point (
-          id, name, point, create_time
+          uid, name, point, create_time
         )
         VALUES (
-        #{id,jdbcType=INTEGER},
+        #{uid,jdbcType=VARCHAR},
         #{name,jdbcType=VARCHAR},
         #{point,jdbcType=INTEGER},
         #{createTime,jdbcType=TIMESTAMP}
@@ -51,12 +51,12 @@
     </insert>
     
     <delete id="delete">
-        DELETE FROM t_user_point WHERE id = #{id,jdbcType=INTEGER}
+        DELETE FROM t_user_point WHERE uid = #{uid,jdbcType=VARCHAR}
     </delete>
     
     <select id="getById" resultMap="baseResultMap">
-        SELECT  id, name, point, create_time 
-        FROM t_user_point WHERE id = #{id,jdbcType=INTEGER}
+        SELECT  uid, name, point, create_time 
+        FROM t_user_point WHERE uid = #{uid,jdbcType=VARCHAR}
     </select>
     
 </mapper>

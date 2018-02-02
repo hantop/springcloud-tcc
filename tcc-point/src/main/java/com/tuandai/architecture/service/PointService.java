@@ -26,12 +26,12 @@ public class PointService {
 	private UserPointTryRepository userPointTryRepository;
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transTry(String name, Integer transId) {
+	public int transTry(String name, String transId) {
 		try {
 			Integer point = 1;
 			UserPointTry userpointTry = new UserPointTry();
-			userpointTry.setId(transId);
-			userpointTry.setpoint(point);
+			userpointTry.setUid(transId);
+			userpointTry.setPoint(point);
 			userpointTry.setName(name);
 			userpointTry.setCreateTime(new Date());
 
@@ -41,6 +41,7 @@ public class PointService {
 				throw new ServiceException();
 			}
 			logger.error("try point : {}", transId);
+			return ir;
 		} catch (Exception ex) {
 			logger.error("try point Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
@@ -48,13 +49,13 @@ public class PointService {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transCancel(Integer transId) {
+	public Boolean transCancel(String transId) {
 		try {
 			UserPointTry userPointTry = userPointTryRepository.getById(transId);
 
 			// 幂等
 			if (null == userPointTry) {
-				return;
+				return false;
 			}
 
 			if (1 != userPointTryRepository.delete(transId)) {
@@ -63,6 +64,7 @@ public class PointService {
 			}
 			logger.error("cancel point : {}", transId);
 
+			return true;
 		} catch (Exception ex) {
 			logger.error("cancel point Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();
@@ -70,18 +72,18 @@ public class PointService {
 	}
 
 	@Transactional(rollbackFor = Exception.class)
-	public void transConfirm(Integer transId) {
+	public Boolean transConfirm(String transId) {
 		try {
 			UserPointTry userpointTry = userPointTryRepository.getById(transId);
 			// 幂等
 			if (null == userpointTry) {
-				return;
+				return false;
 			}
 
 			UserPoint userPoint = new UserPoint();
-			userPoint.setId(userpointTry.getId());
+			userPoint.setUid(userpointTry.getUid());
 			userPoint.setName(userpointTry.getName());
-			userPoint.setpoint(userpointTry.getpoint());
+			userPoint.setPoint(userpointTry.getPoint());
 			userPoint.setCreateTime(new Date());
 
 			if (1 != userPointRepository.confirmPoint(userPoint)) {
@@ -94,6 +96,7 @@ public class PointService {
 				throw new ServiceException();
 			}
 			logger.error("confirm point : {}", transId);
+			return true;
 		} catch (Exception ex) {
 			logger.error("confirm point Exception: {},{}", transId, ex.getMessage());
 			throw new ServiceException();

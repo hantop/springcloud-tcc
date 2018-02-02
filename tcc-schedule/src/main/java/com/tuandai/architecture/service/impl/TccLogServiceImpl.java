@@ -21,7 +21,7 @@ public class TccLogServiceImpl implements TccLogService {
 	SpringBootConfig springBootConfig;
 
 	@Override
-	public void writeLog(Date createTime, String logstr, Long transId, Integer transState, String transUrl) {
+	public void writeLog(Date createTime, String logstr, String transId, Integer transState, String transUrl) {
 		TransLogs log = new TransLogs();
 		log.setCreateTime(createTime);
 		log.setLog(logstr);

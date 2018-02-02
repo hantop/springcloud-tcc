@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import com.tuandai.architecture.component.InitailDBTables;
 import com.tuandai.architecture.config.SpringBootConfig;
+import com.tuandai.architecture.mongodb.LogAnalysisExecutor;
 
 @EnableCircuitBreaker
 @EnableEurekaClient
@@ -25,7 +26,9 @@ public class TccManageApplication {
 
 		// 初始化配置
 		applicationContext.getBean(SpringBootConfig.class).initalNetflixConfig();
-		
+		// 对flume日志执行分析
+		applicationContext.getBean(LogAnalysisExecutor.class).analysis();
+
 	}
 
 }

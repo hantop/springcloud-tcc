@@ -2,34 +2,28 @@ package com.tuandai.architecture.service;
 
 import java.util.List;
 
-import org.springframework.http.ResponseEntity;
-
 import com.tuandai.architecture.domain.Trans;
 import com.tuandai.architecture.domain.TransUrls;
 
 public interface TccService {
-	Long createTrans(String serviceName);
-	
-	ResponseEntity<Object> patchTrans(Long transId,String transUrl,String transUrlParam);
-
 	Boolean ccTrans(Trans trans);
 	
 	void decreaseCCThreshold(Trans trans);
 
-	Boolean ccToRetry(Long transId,int state);
+	Boolean ccToRetry(String transId,int state);
 	
-	Boolean ccOver(Long transId);
+	Boolean ccOver(String transId);
 	
-	Boolean ccOverList(List<Long> transId);
+	Boolean ccOverList(List<String> transId);
 		
-	void confrimMark(Long transId);
+	void confrimMark(String transId);
 		
-	void cancelMark(Long transId);
+	void cancelMark(String transId);
 	
-	void forceCancelTrans(Long transId);
+	void forceCancelTrans(String transId);
 	
-	Trans getTrans(Long transId);
+	Trans getTrans(String transId);
 	
-	List<TransUrls> getTransUrl(Long transId);
+	List<TransUrls> getTransUrl(String transId);
 	
 }

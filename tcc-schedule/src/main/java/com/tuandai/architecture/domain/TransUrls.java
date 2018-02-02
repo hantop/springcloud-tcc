@@ -7,7 +7,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 public final class TransUrls {
 	private Long id;
 	
-	private Long transId;
+	private String transId;
 
 	private String transUrl;
 
@@ -37,11 +37,11 @@ public final class TransUrls {
 		this.id = id;
 	}
 
-	public Long getTransId() {
+	public String getTransId() {
 		return transId;
 	}
 
-	public void setTransId(Long transId) {
+	public void setTransId(String transId) {
 		this.transId = transId;
 	}
 

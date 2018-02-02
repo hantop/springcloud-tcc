@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public final class UserAccountTry  {
-	private Integer id;
+	private String uid;
 
 	private String name;
 	
@@ -14,12 +14,13 @@ public final class UserAccountTry  {
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 	
-	public Integer getId() {
-		return id;
+	
+	public String getUid() {
+		return uid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public String getName() {

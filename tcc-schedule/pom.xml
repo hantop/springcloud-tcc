@@ -16,9 +16,9 @@
 	<description>tcc-schedule  tuandai tcc </description>
 
 	<dependencies>
-		<dependency>
+	    <dependency>
 			<groupId>com.tuandai.architecture</groupId>
-			<artifactId>tcc-clent</artifactId>
+			<artifactId>tcc-common</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>

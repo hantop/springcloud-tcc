@@ -5,7 +5,7 @@ import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 public final class UserPointTry  {
-	private Integer id;
+	private String uid;
 
 	private String name;
 	
@@ -14,12 +14,13 @@ public final class UserPointTry  {
 	@JsonFormat(timezone = "GMT+8", pattern = "yyyy-MM-dd HH:mm:ss")
 	private Date createTime;
 	
-	public Integer getId() {
-		return id;
+
+	public String getUid() {
+		return uid;
 	}
 
-	public void setId(Integer id) {
-		this.id = id;
+	public void setUid(String uid) {
+		this.uid = uid;
 	}
 
 	public String getName() {
@@ -30,14 +31,14 @@ public final class UserPointTry  {
 		this.name = name;
 	}
 
-	public Integer getpoint() {
+	public Integer getPoint() {
 		return point;
 	}
 
-	public void setpoint(Integer point) {
+	public void setPoint(Integer point) {
 		this.point = point;
 	}
-
+	
 	public Date getCreateTime() {
 		return createTime;
 	}

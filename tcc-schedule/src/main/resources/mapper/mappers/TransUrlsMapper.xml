@@ -3,21 +3,23 @@
 <mapper namespace="com.tuandai.architecture.repository.TransUrlsRepository">
     <resultMap id="baseResultMap" type="com.tuandai.architecture.domain.TransUrls">
         <result column="id" property="id" jdbcType="BIGINT"/>
-        <result column="trans_id" property="transId" jdbcType="BIGINT"/>
+        <result column="trans_id" property="transId" jdbcType="VARCHAR"/>
         <result column="trans_url" property="transUrl" jdbcType="VARCHAR"/>
         <result column="trans_url_param" property="transUrlParam" jdbcType="VARCHAR"/>
         <result column="create_time" property="createTime"  jdbcType="TIMESTAMP"/>
         <result column="update_time" property="updateTime"  jdbcType="TIMESTAMP"/>
+        <result column="code" property="code" jdbcType="INTEGER"/>
     </resultMap>
 
     <update id="createIfNotExistsTable">
         CREATE TABLE IF NOT EXISTS t_trans_urls (
          id BIGINT AUTO_INCREMENT, 
-         trans_id BIGINT, 
+         trans_id VARCHAR(100), 
          trans_url VARCHAR(1024),
          trans_url_param VARCHAR(1024),
          create_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP  ,
-         update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+         update_time TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP, 
+         code INTEGER, 
 		 PRIMARY KEY (id))
 		 ENGINE=InnoDB  DEFAULT CHARSET=utf8;;
     </update>
@@ -32,19 +34,20 @@
     
     <insert id="insert" useGeneratedKeys="true" keyProperty="id">
         INSERT INTO t_trans_urls (
-          trans_id, trans_url, trans_url_param, create_time, update_time
+          trans_id, trans_url, trans_url_param, create_time, update_time, code
         )
         VALUES (
-        #{transId,jdbcType=INTEGER},
+        #{transId,jdbcType=VARCHAR},
         #{transUrl,jdbcType=VARCHAR},
         #{transUrlParam,jdbcType=VARCHAR},
         #{createTime,jdbcType=TIMESTAMP},
-        #{updateTime,jdbcType=TIMESTAMP}
+        #{updateTime,jdbcType=TIMESTAMP},
+        #{code,jdbcType=INTEGER}
         )
     </insert>
     
     <delete id="deleteByTransId">
-        DELETE FROM t_trans_urls WHERE trans_id = #{transId,jdbcType=INTEGER}
+        DELETE FROM t_trans_urls WHERE trans_id = #{transId,jdbcType=VARCHAR}
     </delete>
     
     <delete id="deleteBatchByTransId" parameterType="java.util.List">
@@ -58,10 +61,10 @@
     
     <select id="getByTransId" resultMap="baseResultMap">
         SELECT
-        id, trans_id, trans_url, trans_url_param, create_time, update_time
+        id, trans_id, trans_url, trans_url_param, create_time, update_time, code
         FROM
         t_trans_urls 
-        WHERE trans_id = #{transId,jdbcType=INTEGER}
+        WHERE trans_id = #{transId,jdbcType=VARCHAR}
         ORDER BY create_time
         LIMIT 100
     </select>

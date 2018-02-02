@@ -16,9 +16,13 @@
 	<description>tcc-order  tuandai tcc </description>
 
 	<dependencies>
+	    <dependency>
+			<groupId>com.tuandai.architecture</groupId>
+			<artifactId>tcc-common</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>com.tuandai.architecture</groupId>
-			<artifactId>tcc-clent</artifactId>
+			<artifactId>tcc-client</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -36,17 +40,6 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-		</dependency>
-
-		<!-- mybatis mysql -->
-		<dependency>
-			<groupId>org.mybatis.spring.boot</groupId>
-			<artifactId>mybatis-spring-boot-starter</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>mysql</groupId>
-			<artifactId>mysql-connector-java</artifactId>
-			<scope>runtime</scope>
 		</dependency>
 
 

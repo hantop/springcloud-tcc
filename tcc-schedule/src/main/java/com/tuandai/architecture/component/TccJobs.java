@@ -14,10 +14,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
-import com.tuandai.architecture.constant.TransState;
 import com.tuandai.architecture.domain.Trans;
 import com.tuandai.architecture.service.TccService;
 import com.tuandai.architecture.service.TccTaskService;
+import com.tuandai.transaction.constant.TCCState;
 
 @Component
 public class TccJobs {
@@ -64,12 +64,12 @@ public class TccJobs {
 		TccJobs.SCHEDULE_CONFIRM_OPEN = false;
 		TccJobs.executorJobServicePool.execute(() -> {
 			logger.debug("========ConfirmJob Running=========");
-			List<Long> resultTrans = new ArrayList<Long>();
+			List<String> resultTrans = new ArrayList<String>();
 			try {
 				// confirm
-				List<Trans> confirmTrans = tccTaskService.getCCTrans(TransState.CONFIRM.code());
+				List<Trans> confirmTrans = tccTaskService.getCCTrans(TCCState.COMMIT.value());
 
-				final ConcurrentHashMap<Long, Boolean> isConfirmMap = new ConcurrentHashMap<>();
+				final ConcurrentHashMap<String, Boolean> isConfirmMap = new ConcurrentHashMap<>();
 				final CountDownLatch latch = new CountDownLatch(confirmTrans.size());
 				for (Trans trans : confirmTrans) {
 					executorTranCCServicePool.execute(() -> {
@@ -123,12 +123,12 @@ public class TccJobs {
 		TccJobs.SCHEDULE_CANCEL_OPEN = false;
 		TccJobs.executorJobServicePool.execute(() -> {
 			logger.debug("========CancelJob Running=========");
-			List<Long> resultTrans = new ArrayList<Long>();
+			List<String> resultTrans = new ArrayList<String>();
 			try {
 				// confirm
-				List<Trans> cancelTrans = tccTaskService.getCCTrans(TransState.CANCEL.code());
+				List<Trans> cancelTrans = tccTaskService.getCCTrans(TCCState.CANCEL.value());
 
-				final ConcurrentHashMap<Long, Boolean> isCancelMap = new ConcurrentHashMap<>();
+				final ConcurrentHashMap<String, Boolean> isCancelMap = new ConcurrentHashMap<>();
 				final CountDownLatch latch = new CountDownLatch(cancelTrans.size());
 				for (Trans trans : cancelTrans) {
 					executorTranCCServicePool.execute(() -> {
@@ -190,10 +190,10 @@ public class TccJobs {
 				logger.debug("========CheckJob checkTrans========= {}", checkTrans.size());
 				checkTrans = tccTaskService.checkTrans(checkTrans);
 				for (Trans tu : checkTrans) {
-					if (TransState.CONFIRM.code() == tu.getTransState()) {
+					if (TCCState.COMMIT.value() == tu.getTransState()) {
 						tccService.confrimMark(tu.getTransId());
 					}
-					if (TransState.CANCEL.code() == tu.getTransState()) {
+					if (TCCState.CANCEL.value() == tu.getTransState()) {
 						tccService.cancelMark(tu.getTransId());
 					}
 				}
